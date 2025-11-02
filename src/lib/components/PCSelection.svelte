@@ -1,5 +1,8 @@
 <script lang="ts">
 	let pcCount = $state<string>('');
+	let personality = $state<string>('');
+
+	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
 </script>
 
 <div>
@@ -20,7 +23,19 @@
 
 	{#if pcCount === '1'}
 		<p>Single PC</p>
-	{:else if pcCount && pcCount !== ''}
+	{:else if isTeam}
 		<p>PC team</p>
+
+		<fieldset>
+			<legend>Is the team more emotional or rational?</legend>
+			<label>
+				<input type="radio" name="personality" value="emotional" bind:group={personality} />
+				Emotional
+			</label>
+			<label>
+				<input type="radio" name="personality" value="rational" bind:group={personality} />
+				Rational
+			</label>
+		</fieldset>
 	{/if}
 </div>

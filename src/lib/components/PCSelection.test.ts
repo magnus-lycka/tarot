@@ -39,4 +39,36 @@ describe('PCSelection', () => {
 		expect(options).toContain('9');
 		expect(options).toContain('10+');
 	});
+
+	it('asks for team personality (emotional vs rational) when team size > 1', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select team size
+		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
+		await user.selectOptions(sizeSelect, '3');
+
+		// Should show personality question
+		expect(
+			screen.getByText(/is the team more emotional or rational/i)
+		).toBeInTheDocument();
+
+		// Should have both options
+		const emotionalRadio = screen.getByLabelText(/emotional/i);
+		const rationalRadio = screen.getByLabelText(/rational/i);
+		expect(emotionalRadio).toBeInTheDocument();
+		expect(rationalRadio).toBeInTheDocument();
+	});
+
+	it('does not show personality question for single PC', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select single PC
+		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
+		await user.selectOptions(sizeSelect, '1');
+
+		// Should NOT show personality question
+		expect(screen.queryByText(/is the team more emotional or rational/i)).not.toBeInTheDocument();
+	});
 });
