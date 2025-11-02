@@ -36,9 +36,74 @@ A tarot-based tool for tabletop roleplaying games (TTRPGs). The project is in ea
 - Package-specific documentation files contain only the content relevant to that package
 - The content is automatically generated from the same source as the official documentation
 
+## Technology Stack
+
+- **Framework**: SvelteKit 5 with TypeScript
+- **Styling**: Tailwind CSS with Typography and Forms plugins
+- **UI Components**: Melt UI (headless component library)
+- **Testing**: Vitest with Testing Library
+- **Code Quality**: ESLint and Prettier
+- **Build**: Vite
+
+## Development Commands
+
+```bash
+# Development
+npm run dev              # Start dev server
+npm run build            # Build for production
+npm run preview          # Preview production build
+
+# Testing
+npm run test             # Run tests once
+npm run test:watch       # Run tests in watch mode
+npm run test:ui          # Open Vitest UI
+
+# Code Quality
+npm run check            # Type check with svelte-check
+npm run check:watch      # Type check in watch mode
+npm run lint             # Check linting and formatting
+npm run format           # Format code with Prettier
+```
+
+## Architecture
+
+### File Structure
+
+```
+src/
+├── lib/
+│   ├── domain/              # Pure TypeScript domain logic
+│   │   ├── cards.ts         # Card types and definitions
+│   │   ├── deck.ts          # Deck management and drawing
+│   │   ├── pc-selection.ts  # PC card selection logic
+│   │   ├── encounters.ts    # Encounter spread creation
+│   │   └── interpretations.ts # Card meanings (TODO)
+│   ├── components/          # Reusable Svelte components
+│   │   ├── Card.svelte
+│   │   └── CardSpread.svelte
+│   └── assets/              # Static assets
+├── routes/                  # SvelteKit routes
+└── tests/                   # Global test configuration
+    └── setup.ts
+```
+
+### Domain-Driven Design
+
+**Domain Layer** (`src/lib/domain/`):
+- Pure TypeScript, no Svelte dependencies
+- Contains all business logic and rules
+- Fully testable in isolation
+- Co-locate tests with domain files (e.g., `cards.test.ts` next to `cards.ts`)
+
+**Component Layer** (`src/lib/components/`):
+- Thin Svelte wrappers around domain logic
+- Focus on presentation and user interaction
+- Consume domain functions and types
+- Co-locate component tests (e.g., `Card.test.ts` next to `Card.svelte`)
+
 ## Project Status
 
-This repository is currently in the initial setup phase with documentation and image assets but no application code yet.
+SvelteKit 5 project initialized with TypeScript, testing infrastructure, and base domain models.
 
 The idea is to build a static SvelteKit 5 SPA, in a graphical style which fits the old Tarot illustrations.
 
