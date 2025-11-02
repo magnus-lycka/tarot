@@ -140,4 +140,56 @@ describe('PCSelection', () => {
 		// Should show card (10+ maps to 10)
 		expect(screen.getByText('10 of Wands')).toBeInTheDocument();
 	});
+
+	it('asks if rational team is pragmatic or visionary', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select team size
+		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
+		await user.selectOptions(sizeSelect, '5');
+
+		// Select rational
+		const rationalRadio = screen.getByLabelText(/^rational$/i);
+		await user.click(rationalRadio);
+
+		// Should show pragmatic/visionary question
+		expect(screen.getByText(/pragmatic or visionary/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/^pragmatic$/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/^visionary$/i)).toBeInTheDocument();
+	});
+
+	it('shows "4 of Pentacles" for 4-person pragmatic rational team', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select 4 PCs
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
+
+		// Select rational
+		await user.click(screen.getByLabelText(/^rational$/i));
+
+		// Select pragmatic
+		await user.click(screen.getByLabelText(/^pragmatic$/i));
+
+		// Should show card
+		expect(screen.getByText('4 of Pentacles')).toBeInTheDocument();
+	});
+
+	it('shows "5 of Swords" for 5-person visionary rational team', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select 5 PCs
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '5');
+
+		// Select rational
+		await user.click(screen.getByLabelText(/^rational$/i));
+
+		// Select visionary
+		await user.click(screen.getByLabelText(/^visionary$/i));
+
+		// Should show card
+		expect(screen.getByText('5 of Swords')).toBeInTheDocument();
+	});
 });

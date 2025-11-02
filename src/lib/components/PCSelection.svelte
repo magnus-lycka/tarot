@@ -2,17 +2,21 @@
 	let pcCount = $state<string>('');
 	let personality = $state<string>('');
 	let emotionalType = $state<string>('');
+	let rationalType = $state<string>('');
 
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
 	const isEmotional = $derived(personality === 'emotional');
+	const isRational = $derived(personality === 'rational');
 
 	// Convert pcCount to rank number (10+ becomes 10)
 	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
 
-	// Determine suite based on emotional type
+	// Determine suite based on personality type
 	const suite = $derived.by(() => {
 		if (emotionalType === 'hot') return 'Wands';
 		if (emotionalType === 'cool') return 'Cups';
+		if (rationalType === 'pragmatic') return 'Pentacles';
+		if (rationalType === 'visionary') return 'Swords';
 		return '';
 	});
 
@@ -63,6 +67,20 @@
 				<label>
 					<input type="radio" name="emotional-type" value="cool" bind:group={emotionalType} />
 					Cool
+				</label>
+			</fieldset>
+		{/if}
+
+		{#if isRational}
+			<fieldset>
+				<legend>Pragmatic or visionary?</legend>
+				<label>
+					<input type="radio" name="rational-type" value="pragmatic" bind:group={rationalType} />
+					Pragmatic
+				</label>
+				<label>
+					<input type="radio" name="rational-type" value="visionary" bind:group={rationalType} />
+					Visionary
 				</label>
 			</fieldset>
 		{/if}
