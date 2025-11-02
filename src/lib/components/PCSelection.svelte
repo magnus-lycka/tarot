@@ -5,8 +5,8 @@
 	let rationalType = $state<string>('');
 
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
-	const isEmotional = $derived(personality === 'emotional');
-	const isRational = $derived(personality === 'rational');
+	const isFeeling = $derived(personality === 'feeling');
+	const isThinking = $derived(personality === 'thinking');
 
 	// Convert pcCount to rank number (10+ becomes 10)
 	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
@@ -46,18 +46,18 @@
 		<p>PC team</p>
 
 		<fieldset>
-			<legend>Is the team more emotional or rational?</legend>
+			<legend>Is the team more feeling or thinking?</legend>
 			<label>
-				<input type="radio" name="personality" value="emotional" bind:group={personality} />
-				Emotional
+				<input type="radio" name="personality" value="feeling" bind:group={personality} />
+				Big Hearts
 			</label>
 			<label>
-				<input type="radio" name="personality" value="rational" bind:group={personality} />
-				Rational
+				<input type="radio" name="personality" value="thinking" bind:group={personality} />
+				Sharp Brains
 			</label>
 		</fieldset>
 
-		{#if isEmotional}
+		{#if isFeeling}
 			<fieldset>
 				<legend>Hot or cool?</legend>
 				<label>
@@ -71,7 +71,7 @@
 			</fieldset>
 		{/if}
 
-		{#if isRational}
+		{#if isThinking}
 			<fieldset>
 				<legend>Pragmatic or visionary?</legend>
 				<label>
