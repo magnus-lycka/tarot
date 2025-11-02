@@ -69,7 +69,7 @@ npm run format           # Format code with Prettier
 
 ### File Structure
 
-```
+```text
 src/
 ├── lib/
 │   ├── domain/              # Pure TypeScript domain logic
@@ -90,12 +90,14 @@ src/
 ### Domain-Driven Design
 
 **Domain Layer** (`src/lib/domain/`):
+
 - Pure TypeScript, no Svelte dependencies
 - Contains all business logic and rules
 - Fully testable in isolation
 - Co-locate tests with domain files (e.g., `cards.test.ts` next to `cards.ts`)
 
 **Component Layer** (`src/lib/components/`):
+
 - Thin Svelte wrappers around domain logic
 - Focus on presentation and user interaction
 - Consume domain functions and types
