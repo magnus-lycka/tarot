@@ -13,10 +13,10 @@
 
 	// Determine suite based on personality type
 	const suite = $derived.by(() => {
-		if (emotionalType === 'hot') return 'Wands';
-		if (emotionalType === 'cool') return 'Cups';
-		if (rationalType === 'pragmatic') return 'Pentacles';
-		if (rationalType === 'visionary') return 'Swords';
+		if (emotionalType === 'passionate') return 'Wands';
+		if (emotionalType === 'caring') return 'Cups';
+		if (rationalType === 'strategic') return 'Swords';
+		if (rationalType === 'practical') return 'Pentacles';
 		return '';
 	});
 
@@ -59,28 +59,43 @@
 
 		{#if isFeeling}
 			<fieldset>
-				<legend>Hot or cool?</legend>
+				<legend>Passionate and bold, or caring and loyal?</legend>
 				<label>
-					<input type="radio" name="emotional-type" value="hot" bind:group={emotionalType} />
-					Hot
+					<input
+						type="radio"
+						name="emotional-type"
+						value="passionate"
+						bind:group={emotionalType}
+					/>
+					Passionate & Bold
 				</label>
 				<label>
-					<input type="radio" name="emotional-type" value="cool" bind:group={emotionalType} />
-					Cool
+					<input type="radio" name="emotional-type" value="caring" bind:group={emotionalType} />
+					Caring & Loyal
 				</label>
 			</fieldset>
 		{/if}
 
 		{#if isThinking}
 			<fieldset>
-				<legend>Pragmatic or visionary?</legend>
+				<legend>Strategic and sharp, or practical and grounded?</legend>
 				<label>
-					<input type="radio" name="rational-type" value="pragmatic" bind:group={rationalType} />
-					Pragmatic
+					<input
+						type="radio"
+						name="rational-type"
+						value="strategic"
+						bind:group={rationalType}
+					/>
+					Strategic & Sharp
 				</label>
 				<label>
-					<input type="radio" name="rational-type" value="visionary" bind:group={rationalType} />
-					Visionary
+					<input
+						type="radio"
+						name="rational-type"
+						value="practical"
+						bind:group={rationalType}
+					/>
+					Practical & Grounded
 				</label>
 			</fieldset>
 		{/if}

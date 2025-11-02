@@ -70,7 +70,7 @@ describe('PCSelection', () => {
 		expect(screen.queryByText(/is the team more feeling or thinking/i)).not.toBeInTheDocument();
 	});
 
-	it('asks if feeling team is hot or cool', async () => {
+	it('asks if feeling team is passionate/bold or caring/loyal', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -82,13 +82,13 @@ describe('PCSelection', () => {
 		const feelingRadio = screen.getByLabelText(/big hearts/i);
 		await user.click(feelingRadio);
 
-		// Should show hot/cool question
-		expect(screen.getByText(/hot or cool/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/^hot$/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/^cool$/i)).toBeInTheDocument();
+		// Should show wands/cups question
+		expect(screen.getByText(/passionate.*bold.*caring.*loyal/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/passionate.*bold/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/caring.*loyal/i)).toBeInTheDocument();
 	});
 
-	it('shows "4 of Wands" for 4-person hot feeling team', async () => {
+	it('shows "4 of Wands" for 4-person passionate/bold feeling team', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -98,14 +98,14 @@ describe('PCSelection', () => {
 		// Select feeling (Big Hearts)
 		await user.click(screen.getByLabelText(/big hearts/i));
 
-		// Select hot
-		await user.click(screen.getByLabelText(/^hot$/i));
+		// Select passionate & bold (Wands)
+		await user.click(screen.getByLabelText(/passionate.*bold/i));
 
 		// Should show card
 		expect(screen.getByText('4 of Wands')).toBeInTheDocument();
 	});
 
-	it('shows "3 of Cups" for 3-person cool feeling team', async () => {
+	it('shows "3 of Cups" for 3-person caring/loyal feeling team', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -115,14 +115,14 @@ describe('PCSelection', () => {
 		// Select feeling (Big Hearts)
 		await user.click(screen.getByLabelText(/big hearts/i));
 
-		// Select cool
-		await user.click(screen.getByLabelText(/^cool$/i));
+		// Select caring & loyal (Cups)
+		await user.click(screen.getByLabelText(/caring.*loyal/i));
 
 		// Should show card
 		expect(screen.getByText('3 of Cups')).toBeInTheDocument();
 	});
 
-	it('shows "10 of Wands" for 10+ person hot feeling team', async () => {
+	it('shows "10 of Wands" for 10+ person passionate/bold feeling team', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -132,14 +132,14 @@ describe('PCSelection', () => {
 		// Select feeling (Big Hearts)
 		await user.click(screen.getByLabelText(/big hearts/i));
 
-		// Select hot
-		await user.click(screen.getByLabelText(/^hot$/i));
+		// Select passionate & bold (Wands)
+		await user.click(screen.getByLabelText(/passionate.*bold/i));
 
 		// Should show card (10+ maps to 10)
 		expect(screen.getByText('10 of Wands')).toBeInTheDocument();
 	});
 
-	it('asks if thinking team is pragmatic or visionary', async () => {
+	it('asks if thinking team is strategic/sharp or practical/grounded', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -151,13 +151,13 @@ describe('PCSelection', () => {
 		const thinkingRadio = screen.getByLabelText(/sharp brains/i);
 		await user.click(thinkingRadio);
 
-		// Should show pragmatic/visionary question
-		expect(screen.getByText(/pragmatic or visionary/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/^pragmatic$/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/^visionary$/i)).toBeInTheDocument();
+		// Should show swords/pentacles question
+		expect(screen.getByText(/strategic.*sharp.*practical.*grounded/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/strategic.*sharp/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/practical.*grounded/i)).toBeInTheDocument();
 	});
 
-	it('shows "4 of Pentacles" for 4-person pragmatic thinking team', async () => {
+	it('shows "4 of Pentacles" for 4-person practical/grounded thinking team', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -167,14 +167,14 @@ describe('PCSelection', () => {
 		// Select thinking (Sharp Brains)
 		await user.click(screen.getByLabelText(/sharp brains/i));
 
-		// Select pragmatic
-		await user.click(screen.getByLabelText(/^pragmatic$/i));
+		// Select practical & grounded (Pentacles)
+		await user.click(screen.getByLabelText(/practical.*grounded/i));
 
 		// Should show card
 		expect(screen.getByText('4 of Pentacles')).toBeInTheDocument();
 	});
 
-	it('shows "5 of Swords" for 5-person visionary thinking team', async () => {
+	it('shows "5 of Swords" for 5-person strategic/sharp thinking team', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -184,8 +184,8 @@ describe('PCSelection', () => {
 		// Select thinking (Sharp Brains)
 		await user.click(screen.getByLabelText(/sharp brains/i));
 
-		// Select visionary
-		await user.click(screen.getByLabelText(/^visionary$/i));
+		// Select strategic & sharp (Swords)
+		await user.click(screen.getByLabelText(/strategic.*sharp/i));
 
 		// Should show card
 		expect(screen.getByText('5 of Swords')).toBeInTheDocument();
