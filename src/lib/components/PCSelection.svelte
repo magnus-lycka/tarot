@@ -10,6 +10,15 @@
 	const isFeeling = $derived(personality === 'feeling');
 	const isThinking = $derived(personality === 'thinking');
 
+	// Clear selections when personality changes
+	$effect(() => {
+		if (personality === 'feeling') {
+			rationalType = '';
+		} else if (personality === 'thinking') {
+			emotionalType = '';
+		}
+	});
+
 	// Convert pcCount to rank number (10+ becomes 10)
 	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
 

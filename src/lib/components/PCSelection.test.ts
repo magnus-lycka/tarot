@@ -229,4 +229,58 @@ describe('PCSelection', () => {
 		img = screen.getByRole('img', { name: /7 of pentacles/i });
 		expect(img).toHaveAttribute('src', expect.stringContaining('p7.jpg'));
 	});
+
+	it('clears emotional selection when switching from feeling to thinking', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select team size and feeling personality
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
+		await user.click(screen.getByLabelText(/big hearts/i));
+		await user.click(screen.getByLabelText(/passionate.*bold/i));
+
+		// Should show 4 of Wands
+		expect(screen.getByText('4 of Wands')).toBeInTheDocument();
+
+		// Switch to thinking
+		await user.click(screen.getByLabelText(/sharp brains/i));
+
+		// Card should disappear (no card selected yet)
+		expect(screen.queryByText('4 of Wands')).not.toBeInTheDocument();
+		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+
+		// Select rational type
+		await user.click(screen.getByLabelText(/strategic.*sharp/i));
+
+		// Should now show 4 of Swords (not Wands)
+		expect(screen.getByText('4 of Swords')).toBeInTheDocument();
+		expect(screen.queryByText('4 of Wands')).not.toBeInTheDocument();
+	});
+
+	it('clears rational selection when switching from thinking to feeling', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select team size and thinking personality
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '5');
+		await user.click(screen.getByLabelText(/sharp brains/i));
+		await user.click(screen.getByLabelText(/practical.*grounded/i));
+
+		// Should show 5 of Pentacles
+		expect(screen.getByText('5 of Pentacles')).toBeInTheDocument();
+
+		// Switch to feeling
+		await user.click(screen.getByLabelText(/big hearts/i));
+
+		// Card should disappear (no card selected yet)
+		expect(screen.queryByText('5 of Pentacles')).not.toBeInTheDocument();
+		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+
+		// Select emotional type
+		await user.click(screen.getByLabelText(/caring.*loyal/i));
+
+		// Should now show 5 of Cups (not Pentacles)
+		expect(screen.getByText('5 of Cups')).toBeInTheDocument();
+		expect(screen.queryByText('5 of Pentacles')).not.toBeInTheDocument();
+	});
 });
