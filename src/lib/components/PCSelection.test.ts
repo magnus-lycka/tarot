@@ -190,4 +190,43 @@ describe('PCSelection', () => {
 		// Should show card
 		expect(screen.getByText('5 of Swords')).toBeInTheDocument();
 	});
+
+	it('displays card image for selected card', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select 4 PCs → Feeling (Big Hearts) → Passionate & Bold (Wands)
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
+		await user.click(screen.getByLabelText(/big hearts/i));
+		await user.click(screen.getByLabelText(/passionate.*bold/i));
+
+		// Should display image for 4 of Wands (w4.jpg)
+		const img = screen.getByRole('img', { name: /4 of wands/i });
+		expect(img).toBeInTheDocument();
+		expect(img).toHaveAttribute('src', expect.stringContaining('w4.jpg'));
+	});
+
+	it('displays correct card images for different suites', async () => {
+		const user = userEvent.setup();
+		const { unmount } = render(PCSelection);
+
+		// Test Cups (3 of Cups = c3.jpg)
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '3');
+		await user.click(screen.getByLabelText(/big hearts/i));
+		await user.click(screen.getByLabelText(/caring.*loyal/i));
+
+		let img = screen.getByRole('img', { name: /3 of cups/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('c3.jpg'));
+
+		unmount();
+
+		// Test Pentacles (7 of Pentacles = p7.jpg)
+		render(PCSelection);
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '7');
+		await user.click(screen.getByLabelText(/sharp brains/i));
+		await user.click(screen.getByLabelText(/practical.*grounded/i));
+
+		img = screen.getByRole('img', { name: /7 of pentacles/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('p7.jpg'));
+	});
 });

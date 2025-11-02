@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getCardImageFilename } from '$lib/domain/card-images';
+
 	let pcCount = $state<string>('');
 	let personality = $state<string>('');
 	let emotionalType = $state<string>('');
@@ -22,6 +24,17 @@
 
 	// Card display
 	const card = $derived(suite ? `${rankNumber} of ${suite}` : '');
+
+	// Card image path
+	const cardImageSrc = $derived.by(() => {
+		if (!card) return '';
+		try {
+			const filename = getCardImageFilename(card);
+			return `/src/lib/assets/cards/${filename}`;
+		} catch {
+			return '';
+		}
+	});
 </script>
 
 <div>
@@ -101,7 +114,12 @@
 		{/if}
 
 		{#if card}
-			<p>{card}</p>
+			<div>
+				<p>{card}</p>
+				{#if cardImageSrc}
+					<img src={cardImageSrc} alt={card} />
+				{/if}
+			</div>
 		{/if}
 	{/if}
 </div>
