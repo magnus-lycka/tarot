@@ -1,8 +1,23 @@
 <script lang="ts">
 	let pcCount = $state<string>('');
 	let personality = $state<string>('');
+	let emotionalType = $state<string>('');
 
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
+	const isEmotional = $derived(personality === 'emotional');
+
+	// Convert pcCount to rank number (10+ becomes 10)
+	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
+
+	// Determine suite based on emotional type
+	const suite = $derived.by(() => {
+		if (emotionalType === 'hot') return 'Wands';
+		if (emotionalType === 'cool') return 'Cups';
+		return '';
+	});
+
+	// Card display
+	const card = $derived(suite ? `${rankNumber} of ${suite}` : '');
 </script>
 
 <div>
@@ -37,5 +52,23 @@
 				Rational
 			</label>
 		</fieldset>
+
+		{#if isEmotional}
+			<fieldset>
+				<legend>Hot or cool?</legend>
+				<label>
+					<input type="radio" name="emotional-type" value="hot" bind:group={emotionalType} />
+					Hot
+				</label>
+				<label>
+					<input type="radio" name="emotional-type" value="cool" bind:group={emotionalType} />
+					Cool
+				</label>
+			</fieldset>
+		{/if}
+
+		{#if card}
+			<p>{card}</p>
+		{/if}
 	{/if}
 </div>
