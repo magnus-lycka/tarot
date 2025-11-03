@@ -7,6 +7,7 @@
 	let personality = $state<string>('');
 	let emotionalType = $state<string>('');
 	let rationalType = $state<string>('');
+	let courtRank = $state<string>('');
 
 	const isSingle = $derived(pcCount === '1');
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
@@ -14,7 +15,7 @@
 	// Convert pcCount to rank number (10+ becomes 10)
 	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
 
-	// Determine suite based on personality type
+	// Determine suite based on personality type (shared by both single and multi)
 	const suite = $derived.by(() => {
 		if (emotionalType === 'passionate') return 'Wands';
 		if (emotionalType === 'caring') return 'Cups';
@@ -23,15 +24,36 @@
 		return '';
 	});
 
-	// Card display
-	const card = $derived(suite ? `${rankNumber} of ${suite}` : '');
+	// Map court rank to display name
+	const rankDisplay: Record<string, string> = {
+		ace: 'Ace',
+		page: 'Page',
+		knight: 'Knight',
+		queen: 'Queen',
+		king: 'King'
+	};
+
+	// Card display - different logic for single vs multi
+	const card = $derived.by(() => {
+		if (!suite) return '';
+
+		if (isSingle) {
+			// Single PC: use court rank
+			return courtRank && rankDisplay[courtRank] ? `${rankDisplay[courtRank]} of ${suite}` : '';
+		} else if (isTeam) {
+			// Multi PC: use numbered rank
+			return `${rankNumber} of ${suite}`;
+		}
+
+		return '';
+	});
 
 	// Card image path
 	const cardImageSrc = $derived.by(() => {
 		if (!card) return '';
 		try {
 			const filename = getCardImageFilename(card);
-			return `/src/lib/assets/cards/${filename}`;
+			return `/cards/${filename}`;
 		} catch {
 			return '';
 		}
@@ -56,19 +78,23 @@
 
 	{#if isSingle}
 		<p data-testid="single-pc-indicator">Single PC</p>
-		<PCSingleSelection />
+		<PCSingleSelection
+			bind:personality
+			bind:emotionalType
+			bind:rationalType
+			bind:courtRank
+		/>
 	{:else if isTeam}
 		<p data-testid="team-indicator">PC team</p>
-
 		<PCMultiSelection bind:personality bind:emotionalType bind:rationalType />
+	{/if}
 
-		{#if card}
-			<div data-testid="card-display">
-				<p>{card}</p>
-				{#if cardImageSrc}
-					<img src={cardImageSrc} alt={card} />
-				{/if}
-			</div>
-		{/if}
+	{#if card}
+		<div data-testid="card-display">
+			<p>{card}</p>
+			{#if cardImageSrc}
+				<img src={cardImageSrc} alt={card} />
+			{/if}
+		</div>
 	{/if}
 </div>
