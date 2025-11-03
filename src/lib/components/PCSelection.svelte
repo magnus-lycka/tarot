@@ -63,11 +63,11 @@
 	</select>
 
 	{#if pcCount === '1'}
-		<p>Single PC</p>
+		<p data-testid="single-pc-indicator">Single PC</p>
 	{:else if isTeam}
-		<p>PC team</p>
+		<p data-testid="team-indicator">PC team</p>
 
-		<fieldset>
+		<fieldset data-testid="personality-selection">
 			<legend>Is the team more feeling or thinking?</legend>
 			<label>
 				<input type="radio" name="personality" value="feeling" bind:group={personality} />
@@ -80,7 +80,7 @@
 		</fieldset>
 
 		{#if isFeeling}
-			<fieldset>
+			<fieldset data-testid="emotional-type-selection">
 				<legend>Passionate and bold, or caring and loyal?</legend>
 				<label>
 					<input
@@ -99,7 +99,7 @@
 		{/if}
 
 		{#if isThinking}
-			<fieldset>
+			<fieldset data-testid="rational-type-selection">
 				<legend>Strategic and sharp, or practical and grounded?</legend>
 				<label>
 					<input
@@ -123,7 +123,7 @@
 		{/if}
 
 		{#if card}
-			<div>
+			<div data-testid="card-display">
 				<p>{card}</p>
 				{#if cardImageSrc}
 					<img src={cardImageSrc} alt={card} />

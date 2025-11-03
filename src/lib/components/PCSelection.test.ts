@@ -12,8 +12,8 @@ describe('PCSelection', () => {
 		const select = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(select, '1');
 
-		// Should show single PC message
-		expect(screen.getByText('Single PC')).toBeInTheDocument();
+		// Should show single PC indicator
+		expect(screen.getByTestId('single-pc-indicator')).toBeInTheDocument();
 	});
 
 	it('shows "PC team" when user selects more than 1 PC', async () => {
@@ -24,8 +24,8 @@ describe('PCSelection', () => {
 		const select = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(select, '2');
 
-		// Should show team message
-		expect(screen.getByText('PC team')).toBeInTheDocument();
+		// Should show team indicator
+		expect(screen.getByTestId('team-indicator')).toBeInTheDocument();
 	});
 
 	it('provides options from 1 to 10+', () => {
@@ -48,14 +48,15 @@ describe('PCSelection', () => {
 		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(sizeSelect, '3');
 
-		// Should show personality question
-		expect(screen.getByText(/is the team more feeling or thinking/i)).toBeInTheDocument();
+		// Should show personality selection
+		const personalityFieldset = screen.getByTestId('personality-selection');
+		expect(personalityFieldset).toBeInTheDocument();
 
-		// Should have both options
-		const feelingRadio = screen.getByLabelText(/big hearts/i);
-		const thinkingRadio = screen.getByLabelText(/sharp brains/i);
-		expect(feelingRadio).toBeInTheDocument();
-		expect(thinkingRadio).toBeInTheDocument();
+		// Should have both options (by value, not label text)
+		const feelingRadio = screen.getByRole('radio', { name: /big hearts/i });
+		const thinkingRadio = screen.getByRole('radio', { name: /sharp brains/i });
+		expect(feelingRadio).toHaveAttribute('value', 'feeling');
+		expect(thinkingRadio).toHaveAttribute('value', 'thinking');
 	});
 
 	it('does not show personality question for single PC', async () => {
@@ -66,8 +67,8 @@ describe('PCSelection', () => {
 		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(sizeSelect, '1');
 
-		// Should NOT show personality question
-		expect(screen.queryByText(/is the team more feeling or thinking/i)).not.toBeInTheDocument();
+		// Should NOT show personality selection
+		expect(screen.queryByTestId('personality-selection')).not.toBeInTheDocument();
 	});
 
 	it('asks if feeling team is passionate/bold or caring/loyal', async () => {
@@ -78,14 +79,19 @@ describe('PCSelection', () => {
 		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(sizeSelect, '4');
 
-		// Select feeling (Big Hearts)
-		const feelingRadio = screen.getByLabelText(/big hearts/i);
+		// Select feeling
+		const feelingRadio = screen.getByRole('radio', { name: /big hearts/i });
 		await user.click(feelingRadio);
 
-		// Should show wands/cups question
-		expect(screen.getByText(/passionate.*bold.*caring.*loyal/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/passionate.*bold/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/caring.*loyal/i)).toBeInTheDocument();
+		// Should show emotional type selection
+		const emotionalFieldset = screen.getByTestId('emotional-type-selection');
+		expect(emotionalFieldset).toBeInTheDocument();
+
+		// Should have passionate and caring options (by value)
+		const passionateRadio = screen.getByRole('radio', { name: /passionate.*bold/i });
+		const caringRadio = screen.getByRole('radio', { name: /caring.*loyal/i });
+		expect(passionateRadio).toHaveAttribute('value', 'passionate');
+		expect(caringRadio).toHaveAttribute('value', 'caring');
 	});
 
 	it('shows "4 of Wands" for 4-person passionate/bold feeling team', async () => {
@@ -95,14 +101,15 @@ describe('PCSelection', () => {
 		// Select 4 PCs
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
 
-		// Select feeling (Big Hearts)
-		await user.click(screen.getByLabelText(/big hearts/i));
+		// Select feeling
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
 
-		// Select passionate & bold (Wands)
-		await user.click(screen.getByLabelText(/passionate.*bold/i));
+		// Select passionate (Wands)
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
 
 		// Should show card
-		expect(screen.getByText('4 of Wands')).toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('4 of Wands');
 	});
 
 	it('shows "3 of Cups" for 3-person caring/loyal feeling team', async () => {
@@ -112,14 +119,15 @@ describe('PCSelection', () => {
 		// Select 3 PCs
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '3');
 
-		// Select feeling (Big Hearts)
-		await user.click(screen.getByLabelText(/big hearts/i));
+		// Select feeling
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
 
-		// Select caring & loyal (Cups)
-		await user.click(screen.getByLabelText(/caring.*loyal/i));
+		// Select caring (Cups)
+		await user.click(screen.getByRole('radio', { name: /caring.*loyal/i }));
 
 		// Should show card
-		expect(screen.getByText('3 of Cups')).toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('3 of Cups');
 	});
 
 	it('shows "10 of Wands" for 10+ person passionate/bold feeling team', async () => {
@@ -129,14 +137,15 @@ describe('PCSelection', () => {
 		// Select 10+ PCs
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '10+');
 
-		// Select feeling (Big Hearts)
-		await user.click(screen.getByLabelText(/big hearts/i));
+		// Select feeling
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
 
-		// Select passionate & bold (Wands)
-		await user.click(screen.getByLabelText(/passionate.*bold/i));
+		// Select passionate (Wands)
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
 
 		// Should show card (10+ maps to 10)
-		expect(screen.getByText('10 of Wands')).toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('10 of Wands');
 	});
 
 	it('asks if thinking team is strategic/sharp or practical/grounded', async () => {
@@ -147,14 +156,19 @@ describe('PCSelection', () => {
 		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(sizeSelect, '5');
 
-		// Select thinking (Sharp Brains)
-		const thinkingRadio = screen.getByLabelText(/sharp brains/i);
+		// Select thinking
+		const thinkingRadio = screen.getByRole('radio', { name: /sharp brains/i });
 		await user.click(thinkingRadio);
 
-		// Should show swords/pentacles question
-		expect(screen.getByText(/strategic.*sharp.*practical.*grounded/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/strategic.*sharp/i)).toBeInTheDocument();
-		expect(screen.getByLabelText(/practical.*grounded/i)).toBeInTheDocument();
+		// Should show rational type selection
+		const rationalFieldset = screen.getByTestId('rational-type-selection');
+		expect(rationalFieldset).toBeInTheDocument();
+
+		// Should have strategic and practical options (by value)
+		const strategicRadio = screen.getByRole('radio', { name: /strategic.*sharp/i });
+		const practicalRadio = screen.getByRole('radio', { name: /practical.*grounded/i });
+		expect(strategicRadio).toHaveAttribute('value', 'strategic');
+		expect(practicalRadio).toHaveAttribute('value', 'practical');
 	});
 
 	it('shows "4 of Pentacles" for 4-person practical/grounded thinking team', async () => {
@@ -164,14 +178,15 @@ describe('PCSelection', () => {
 		// Select 4 PCs
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
 
-		// Select thinking (Sharp Brains)
-		await user.click(screen.getByLabelText(/sharp brains/i));
+		// Select thinking
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
 
-		// Select practical & grounded (Pentacles)
-		await user.click(screen.getByLabelText(/practical.*grounded/i));
+		// Select practical (Pentacles)
+		await user.click(screen.getByRole('radio', { name: /practical.*grounded/i }));
 
 		// Should show card
-		expect(screen.getByText('4 of Pentacles')).toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('4 of Pentacles');
 	});
 
 	it('shows "5 of Swords" for 5-person strategic/sharp thinking team', async () => {
@@ -181,24 +196,25 @@ describe('PCSelection', () => {
 		// Select 5 PCs
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '5');
 
-		// Select thinking (Sharp Brains)
-		await user.click(screen.getByLabelText(/sharp brains/i));
+		// Select thinking
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
 
-		// Select strategic & sharp (Swords)
-		await user.click(screen.getByLabelText(/strategic.*sharp/i));
+		// Select strategic (Swords)
+		await user.click(screen.getByRole('radio', { name: /strategic.*sharp/i }));
 
 		// Should show card
-		expect(screen.getByText('5 of Swords')).toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('5 of Swords');
 	});
 
 	it('displays card image for selected card', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
-		// Select 4 PCs → Feeling (Big Hearts) → Passionate & Bold (Wands)
+		// Select 4 PCs → Feeling → Passionate (Wands)
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
-		await user.click(screen.getByLabelText(/big hearts/i));
-		await user.click(screen.getByLabelText(/passionate.*bold/i));
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
 
 		// Should display image for 4 of Wands (w4.jpg)
 		const img = screen.getByRole('img', { name: /4 of wands/i });
@@ -212,8 +228,8 @@ describe('PCSelection', () => {
 
 		// Test Cups (3 of Cups = c3.jpg)
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '3');
-		await user.click(screen.getByLabelText(/big hearts/i));
-		await user.click(screen.getByLabelText(/caring.*loyal/i));
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /caring.*loyal/i }));
 
 		let img = screen.getByRole('img', { name: /3 of cups/i });
 		expect(img).toHaveAttribute('src', expect.stringContaining('c3.jpg'));
@@ -223,8 +239,8 @@ describe('PCSelection', () => {
 		// Test Pentacles (7 of Pentacles = p7.jpg)
 		render(PCSelection);
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '7');
-		await user.click(screen.getByLabelText(/sharp brains/i));
-		await user.click(screen.getByLabelText(/practical.*grounded/i));
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
+		await user.click(screen.getByRole('radio', { name: /practical.*grounded/i }));
 
 		img = screen.getByRole('img', { name: /7 of pentacles/i });
 		expect(img).toHaveAttribute('src', expect.stringContaining('p7.jpg'));
@@ -236,25 +252,25 @@ describe('PCSelection', () => {
 
 		// Select team size and feeling personality
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '4');
-		await user.click(screen.getByLabelText(/big hearts/i));
-		await user.click(screen.getByLabelText(/passionate.*bold/i));
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
 
 		// Should show 4 of Wands
-		expect(screen.getByText('4 of Wands')).toBeInTheDocument();
+		expect(screen.getByTestId('card-display')).toHaveTextContent('4 of Wands');
 
 		// Switch to thinking
-		await user.click(screen.getByLabelText(/sharp brains/i));
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
 
 		// Card should disappear (no card selected yet)
-		expect(screen.queryByText('4 of Wands')).not.toBeInTheDocument();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('card-display')).not.toBeInTheDocument();
 
 		// Select rational type
-		await user.click(screen.getByLabelText(/strategic.*sharp/i));
+		await user.click(screen.getByRole('radio', { name: /strategic.*sharp/i }));
 
 		// Should now show 4 of Swords (not Wands)
-		expect(screen.getByText('4 of Swords')).toBeInTheDocument();
-		expect(screen.queryByText('4 of Wands')).not.toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('4 of Swords');
+		expect(cardDisplay).not.toHaveTextContent('4 of Wands');
 	});
 
 	it('clears rational selection when switching from thinking to feeling', async () => {
@@ -263,24 +279,24 @@ describe('PCSelection', () => {
 
 		// Select team size and thinking personality
 		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '5');
-		await user.click(screen.getByLabelText(/sharp brains/i));
-		await user.click(screen.getByLabelText(/practical.*grounded/i));
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
+		await user.click(screen.getByRole('radio', { name: /practical.*grounded/i }));
 
 		// Should show 5 of Pentacles
-		expect(screen.getByText('5 of Pentacles')).toBeInTheDocument();
+		expect(screen.getByTestId('card-display')).toHaveTextContent('5 of Pentacles');
 
 		// Switch to feeling
-		await user.click(screen.getByLabelText(/big hearts/i));
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
 
 		// Card should disappear (no card selected yet)
-		expect(screen.queryByText('5 of Pentacles')).not.toBeInTheDocument();
-		expect(screen.queryByRole('img')).not.toBeInTheDocument();
+		expect(screen.queryByTestId('card-display')).not.toBeInTheDocument();
 
 		// Select emotional type
-		await user.click(screen.getByLabelText(/caring.*loyal/i));
+		await user.click(screen.getByRole('radio', { name: /caring.*loyal/i }));
 
 		// Should now show 5 of Cups (not Pentacles)
-		expect(screen.getByText('5 of Cups')).toBeInTheDocument();
-		expect(screen.queryByText('5 of Pentacles')).not.toBeInTheDocument();
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('5 of Cups');
+		expect(cardDisplay).not.toHaveTextContent('5 of Pentacles');
 	});
 });

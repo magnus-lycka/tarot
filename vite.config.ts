@@ -7,7 +7,13 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}'],
 		globals: true,
 		environment: 'jsdom',
-		setupFiles: ['./src/tests/setup.ts']
+		setupFiles: ['./src/tests/setup.ts'],
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'html', 'lcov'],
+			include: ['src/**/*.{js,ts,svelte}'],
+			exclude: ['src/**/*.{test,spec}.{js,ts}', 'src/tests/setup.ts']
+		}
 	},
 	resolve: {
 		conditions: ['browser']
