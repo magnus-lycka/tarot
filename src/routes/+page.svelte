@@ -3,7 +3,7 @@
 </script>
 
 <main>
-	<h1>Tarot for TTRPG</h1>
+	<h1>Tarot for Encounters</h1>
 	<PCSelection />
 </main>
 
