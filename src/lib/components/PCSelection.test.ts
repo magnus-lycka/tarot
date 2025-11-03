@@ -71,6 +71,114 @@ describe('PCSelection', () => {
 		expect(screen.getByTestId('personality-selection')).toBeInTheDocument();
 	});
 
+	it('shows court rank selection for single PC after suite selected', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		// Select single PC
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+
+		// Select feeling and passionate
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
+
+		// Should show court rank selection
+		const courtFieldset = screen.getByTestId('court-rank-selection');
+		expect(courtFieldset).toBeInTheDocument();
+
+		// Should have all 5 court ranks
+		expect(screen.getByRole('radio', { name: /ace/i })).toBeInTheDocument();
+		expect(screen.getByRole('radio', { name: /page/i })).toBeInTheDocument();
+		expect(screen.getByRole('radio', { name: /knight/i })).toBeInTheDocument();
+		expect(screen.getByRole('radio', { name: /queen/i })).toBeInTheDocument();
+		expect(screen.getByRole('radio', { name: /king/i })).toBeInTheDocument();
+	});
+
+	it('shows Ace of Wands for single PC with feeling/passionate/ace', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
+		await user.click(screen.getByRole('radio', { name: /ace/i }));
+
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('Ace of Wands');
+
+		// Check image
+		const img = screen.getByRole('img', { name: /ace of wands/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('w1.jpg'));
+	});
+
+	it('shows Page of Cups for single PC with feeling/caring/page', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /caring.*loyal/i }));
+		await user.click(screen.getByRole('radio', { name: /page/i }));
+
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('Page of Cups');
+
+		// Check image (Page = 11)
+		const img = screen.getByRole('img', { name: /page of cups/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('c11.jpg'));
+	});
+
+	it('shows Knight of Swords for single PC with thinking/strategic/knight', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
+		await user.click(screen.getByRole('radio', { name: /strategic.*sharp/i }));
+		await user.click(screen.getByRole('radio', { name: /knight/i }));
+
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('Knight of Swords');
+
+		// Check image (Knight = 12)
+		const img = screen.getByRole('img', { name: /knight of swords/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('s12.jpg'));
+	});
+
+	it('shows Queen of Pentacles for single PC with thinking/practical/queen', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+		await user.click(screen.getByRole('radio', { name: /sharp brains/i }));
+		await user.click(screen.getByRole('radio', { name: /practical.*grounded/i }));
+		await user.click(screen.getByRole('radio', { name: /queen/i }));
+
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('Queen of Pentacles');
+
+		// Check image (Queen = 13)
+		const img = screen.getByRole('img', { name: /queen of pentacles/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('p13.jpg'));
+	});
+
+	it('shows King of Wands for single PC with feeling/passionate/king', async () => {
+		const user = userEvent.setup();
+		render(PCSelection);
+
+		await user.selectOptions(screen.getByLabelText(/how many (player characters|pcs)/i), '1');
+		await user.click(screen.getByRole('radio', { name: /big hearts/i }));
+		await user.click(screen.getByRole('radio', { name: /passionate.*bold/i }));
+		await user.click(screen.getByRole('radio', { name: /king/i }));
+
+		const cardDisplay = screen.getByTestId('card-display');
+		expect(cardDisplay).toHaveTextContent('King of Wands');
+
+		// Check image (King = 14)
+		const img = screen.getByRole('img', { name: /king of wands/i });
+		expect(img).toHaveAttribute('src', expect.stringContaining('w14.jpg'));
+	});
+
 	it('asks if feeling team is passionate/bold or caring/loyal', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
