@@ -6,19 +6,13 @@
  * Convert card display name to image filename
  * Examples:
  *   "4 of Wands" → "w4.jpg"
- *   "3 of Cups" → "c3.jpg"
- *   "10 of Pentacles" → "p10.jpg"
+ *   "Ace of Cups" → "c1.jpg"
+ *   "Page of Swords" → "s11.jpg"
+ *   "Knight of Pentacles" → "p12.jpg"
+ *   "Queen of Wands" → "w13.jpg"
+ *   "King of Cups" → "c14.jpg"
  */
 export function getCardImageFilename(cardName: string): string {
-	// Extract number and suite from card name
-	const match = cardName.match(/^(\d+) of (Wands|Cups|Swords|Pentacles)$/);
-
-	if (!match) {
-		throw new Error(`Invalid card name: ${cardName}`);
-	}
-
-	const [, number, suite] = match;
-
 	// Map suite to prefix
 	const suitePrefix: Record<string, string> = {
 		Wands: 'w',
@@ -27,5 +21,29 @@ export function getCardImageFilename(cardName: string): string {
 		Pentacles: 'p'
 	};
 
-	return `${suitePrefix[suite]}${number}.jpg`;
+	// Try numbered card pattern (e.g., "4 of Wands")
+	const numberedMatch = cardName.match(/^(\d+) of (Wands|Cups|Swords|Pentacles)$/);
+	if (numberedMatch) {
+		const [, number, suite] = numberedMatch;
+		return `${suitePrefix[suite]}${number}.jpg`;
+	}
+
+	// Try court card pattern (e.g., "Ace of Wands", "Page of Cups")
+	const courtMatch = cardName.match(/^(Ace|Page|Knight|Queen|King) of (Wands|Cups|Swords|Pentacles)$/);
+	if (courtMatch) {
+		const [, rank, suite] = courtMatch;
+
+		// Map court ranks to numbers
+		const rankNumber: Record<string, string> = {
+			Ace: '1',
+			Page: '11',
+			Knight: '12',
+			Queen: '13',
+			King: '14'
+		};
+
+		return `${suitePrefix[suite]}${rankNumber[rank]}.jpg`;
+	}
+
+	throw new Error(`Invalid card name: ${cardName}`);
 }
