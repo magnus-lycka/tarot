@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getCardImageFilename } from '$lib/domain/card-images';
+	import PCMultiSelection from './PCMultiSelection.svelte';
 
 	let pcCount = $state<string>('');
 	let personality = $state<string>('');
@@ -7,17 +8,6 @@
 	let rationalType = $state<string>('');
 
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
-	const isFeeling = $derived(personality === 'feeling');
-	const isThinking = $derived(personality === 'thinking');
-
-	// Clear selections when personality changes
-	$effect(() => {
-		if (personality === 'feeling') {
-			rationalType = '';
-		} else if (personality === 'thinking') {
-			emotionalType = '';
-		}
-	});
 
 	// Convert pcCount to rank number (10+ becomes 10)
 	const rankNumber = $derived(pcCount === '10+' ? '10' : pcCount);
@@ -67,60 +57,7 @@
 	{:else if isTeam}
 		<p data-testid="team-indicator">PC team</p>
 
-		<fieldset data-testid="personality-selection">
-			<legend>Is the team more feeling or thinking?</legend>
-			<label>
-				<input type="radio" name="personality" value="feeling" bind:group={personality} />
-				Big Hearts
-			</label>
-			<label>
-				<input type="radio" name="personality" value="thinking" bind:group={personality} />
-				Sharp Brains
-			</label>
-		</fieldset>
-
-		{#if isFeeling}
-			<fieldset data-testid="emotional-type-selection">
-				<legend>Passionate and bold, or caring and loyal?</legend>
-				<label>
-					<input
-						type="radio"
-						name="emotional-type"
-						value="passionate"
-						bind:group={emotionalType}
-					/>
-					Passionate & Bold
-				</label>
-				<label>
-					<input type="radio" name="emotional-type" value="caring" bind:group={emotionalType} />
-					Caring & Loyal
-				</label>
-			</fieldset>
-		{/if}
-
-		{#if isThinking}
-			<fieldset data-testid="rational-type-selection">
-				<legend>Strategic and sharp, or practical and grounded?</legend>
-				<label>
-					<input
-						type="radio"
-						name="rational-type"
-						value="strategic"
-						bind:group={rationalType}
-					/>
-					Strategic & Sharp
-				</label>
-				<label>
-					<input
-						type="radio"
-						name="rational-type"
-						value="practical"
-						bind:group={rationalType}
-					/>
-					Practical & Grounded
-				</label>
-			</fieldset>
-		{/if}
+		<PCMultiSelection bind:personality bind:emotionalType bind:rationalType />
 
 		{#if card}
 			<div data-testid="card-display">
