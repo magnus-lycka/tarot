@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { getCardImageFilename } from '$lib/domain/card-images';
 	import PCMultiSelection from './PCMultiSelection.svelte';
+	import PCSingleSelection from './PCSingleSelection.svelte';
 
 	let pcCount = $state<string>('');
 	let personality = $state<string>('');
 	let emotionalType = $state<string>('');
 	let rationalType = $state<string>('');
 
+	const isSingle = $derived(pcCount === '1');
 	const isTeam = $derived(pcCount !== '' && pcCount !== '1');
 
 	// Convert pcCount to rank number (10+ becomes 10)
@@ -52,8 +54,9 @@
 		<option value="10+">10+</option>
 	</select>
 
-	{#if pcCount === '1'}
+	{#if isSingle}
 		<p data-testid="single-pc-indicator">Single PC</p>
+		<PCSingleSelection />
 	{:else if isTeam}
 		<p data-testid="team-indicator">PC team</p>
 

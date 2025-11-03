@@ -59,7 +59,7 @@ describe('PCSelection', () => {
 		expect(thinkingRadio).toHaveAttribute('value', 'thinking');
 	});
 
-	it('does not show personality question for single PC', async () => {
+	it('shows personality selection for single PC', async () => {
 		const user = userEvent.setup();
 		render(PCSelection);
 
@@ -67,8 +67,8 @@ describe('PCSelection', () => {
 		const sizeSelect = screen.getByLabelText(/how many (player characters|pcs)/i);
 		await user.selectOptions(sizeSelect, '1');
 
-		// Should NOT show personality selection
-		expect(screen.queryByTestId('personality-selection')).not.toBeInTheDocument();
+		// Should show personality selection (single PC also needs suite)
+		expect(screen.getByTestId('personality-selection')).toBeInTheDocument();
 	});
 
 	it('asks if feeling team is passionate/bold or caring/loyal', async () => {
